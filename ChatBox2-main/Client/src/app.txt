@@ -1,0 +1,129 @@
+function App() {
+  
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [dob, setDob] = useState("")
+  const [file, setFile] = useState(null)
+  
+
+
+  const handleUsername = (e) => {
+    setUsername(e.target.value)
+  }
+  const handlePassword = (e) => {
+    setPassword(e.target.value)
+  }
+  const handleEmail = (e) => {
+    setEmail(e.target.value)
+  }
+  const handleDob = (e) => {
+    setDob(e.target.value)
+  }
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0])
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if(!file){
+      console.log("Please select a file")
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('avatar' , file)
+    formData.append('username' , username)
+    formData.append('password' , password)
+    formData.append('email' , email)
+    formData.append('dob' , dob)
+
+    // console.log(process.env.REGISTER_DOMAIN)
+    // you're trying to use the dotenv package in a browser environment, 
+    // which is not its intended use case. dotenv is primarily used in Node.js applications
+    // to load environment variables from a .env file into the process.env object.
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/v1/users/register' , formData , {
+        headers: {
+          'Content-Type' : 'multipart/form-data'
+        }
+      });
+
+      setUsername('')
+      setDob('')
+      setEmail('')
+      setPassword('')
+      setFile(null)
+      document.getElementById('fileInput').value = '';
+    } catch (error) {
+        console.error('Error uploading file: ', error)
+    }
+
+    // try {
+    //   console.log(formData)
+    //   const response = await axios.post('http://localhost:5000/api/v1/users/register', formData);
+      
+    //   // Handle response if needed
+    //   console.log('Server response:', response.data);
+    // } catch (error) {
+    //   console.error('Error submitting form:', error);
+    // }
+
+  };
+
+
+  return (
+  <>
+    <div>
+       <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="username"
+        value={username}
+        onChange={handleUsername}
+        placeholder="Username"
+      />
+      <input
+        type="email"
+        name="email"
+        value={email}
+        onChange={handleEmail}
+        placeholder="Email"
+      />
+      <input
+        type="password"
+        name="password"
+        value={password}
+        onChange={handlePassword}
+        placeholder="Password"
+      />
+      <input
+        type="text"
+        name="dob"
+        value={dob}
+        onChange={handleDob}
+        placeholder="DoB"
+      />
+       <input
+       id='fileInput'
+        type="file"
+        accept="image/*" // Accept only image files
+        name="avatar"
+        onChange={handleFileChange}
+      />
+      {/* Add other form fields as needed */}
+      <button type="submit">Submit</button>
+    </form>
+    </div>
+  </>
+    
+  )
+}
+
+export default App
+
+
+

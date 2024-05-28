@@ -1,0 +1,45 @@
+import mongoose, {Schema} from mongoose
+
+const loginSchema = new Schema({
+    username: {
+        type: String ,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    }
+},{
+    timestamps : true
+})
+
+
+const signupSchema = new Schema({
+    username: {
+        type: String ,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    dob: {
+        type: Date,
+        required: true
+    }
+},{
+    timestamps : true
+})
+
+
+
+
+
+export const Login = mongoose.model("Login" , loginSchema)
+export const SignUp = mongoose.model("SignUp" , signupSchema)

@@ -1,0 +1,90 @@
+import mongoose, {Schema} from mongoose
+
+const randomNumber = Math.floor(Math.random() * 99999);
+
+const generatedCodeSchema = new Schema({
+    default: randomNumber,
+    username: String,
+    code:number,
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    }
+})
+
+const GeneratedCode = mongoose.model("GeneratedCode", generatedCodeSchema)
+
+const messageSchema = new Schema({
+    content: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    }
+})
+
+export const Message = mongoose.model("Message",messageSchema)
+
+const userSchema = new Schema({
+    // username: String,
+    // email: String,
+    // password: String,
+    // dob: Date,
+    // verifyCode: String,
+    // verifyCodeExpiry: Date,
+    // // uniqueCode: {
+    // //     type: mongoose.Schema.types.ObjectId,
+    // //     ref: 'GeneratedCode'
+    // // }
+    // uniqueCode: String,
+    // message: [{
+    //     type: mongoose.Schema.types.ObejectId,
+    //     ref: 'Message'
+    // }]
+    username: {
+        type: String,
+        unique: [true,"This username already exists"],
+        required: [true,"Username is required"]
+    },
+    email: {
+        type: String,
+        match: [/.+\@.+\..+/,"Please enter a valid email"],
+        unique: [true , "This email is already registered"],
+        required: [true , " Email is required"]
+    },
+    password: {
+        type: String,
+        required: [true , "Password is required"]        
+    },
+    dob: {
+        type: Date,
+        required: [true,"Date of Birth is required"],
+        // validate: {
+        //     validator: function(dateOfBirth) {
+                
+        //         const age = Math.floor((new Date() - dateOfBirth) / 31557600000); // 31557600000 ms = 1 year
+        
+        //         // Check if age is within the allowed range 
+        //         return age >= 18 && age <= 70;
+        //       },
+        //       message: props => `${props.value} is not a valid age. Must be between 18 and 70 years.`
+        //     }
+    },
+    uniqueCode: {
+        type: mongoose.Schema.types.ObjectId,
+        ref: "GeneratedCode"
+    },
+    messages: [{
+        type: mongoose.Schema.types.ObejectId,
+        ref: 'Message'
+    }]
+},{
+    timestamps: true
+})
+
+export const User = mongoose.model("User",userSchema)
+
